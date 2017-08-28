@@ -28,8 +28,7 @@ void setup() {
   SPI.setBitOrder(1); // MSB-first
 
   
-  radio.begin(9600);  // Defaults 1Mbps, channel 0, max TX power
-
+  radio.begin(1000000);  // Defaults 1Mbps, channel 0, max TX power
   radio.setChannel(76);
   radio.setCRC(1,1); 
   radio.setTXaddress((void*)txaddr);
