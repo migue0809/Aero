@@ -1,9 +1,5 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-#
-# Example program to receive packets from the radio link
-#
-
 
 import RPi.GPIO as GPIO
 GPIO.setmode(GPIO.BCM)
@@ -13,17 +9,16 @@ import spidev
 import urllib, urllib2
 
 def toGx(x):
-    ixx=round(-1.214/100000000*ix**3+1.844/100000*ix**2-0.002251*ix-2,2)
+    ixx=round(-1.214/100000000*x**3+1.844/100000*x**2-0.002251*x-2,2)
     return ixx
 
 def toGy(y):
-    iyy=round(-1.268/100000000*ix**3+1.945/100000*ix**2-0.002715*ix-2.001,2)
+    iyy=round(-1.268/100000000*y**3+1.945/100000*y**2-0.002715*y-2.001,2)
     return iyy
 
 def toGz(z):
-    izz=round(-1.306/100000000*ix**3+1.99/100000*ix**2-0.002778*ix-1.999,2)
+    izz=round(-1.306/100000000*z**3+1.99/100000*z**2-0.002778*z-1.999,2)
     return izz
-
 
 GPIO.setwarnings(False)
 
@@ -47,12 +42,13 @@ radio.startListening()
 #Open sending buffers
 send=[]
 sendBuffer1=[]
-sendBUffer2=[]
+sendBuffer2=[]
 sendBuffer3=[]
 sendBuffer4=[]
 
 while True:
     while radio.available():
+        print("Radio available")
         received = []
         radio.read(received, radio.getDynamicPayloadSize())
 
@@ -61,7 +57,7 @@ while True:
             for n in received:
                 if (n>=32 and n<=126):
                     string += chr(n)
-            
+            print(string)
             if string[0]=='r':
                 ind1=string.find('r')
                 ind2=string.find('r',ind1+1)
@@ -74,18 +70,14 @@ while True:
                     
                     if irpm==0:
                         rpm="0.0"
+                        
+                    try:
+                        f = urllib2.urlopen("http://sistelemetria-sistelemetria.rhcloud.com/save_aero.php?type=rpm&rpm="+rpm)
+                            
+                    except:
+                        print("There is no internet connection")
                         sendBuffer3.append(rpm)
                         sendBuffer4=sendBuffer3[:]
-                        
-                        try:
-                            for sendRPM in sendBuffer3:
-                                f = urllib2.urlopen("http://sistelemetria-sistelemetria.rhcloud.com/save_aero.php?type=rpm&rpm="+sendRPM)
-                                
-                                if sendElem in sendBuffer4:
-                                    sendBuffer4.remove(sendRPM)
-                                    sendBuffer3=sendBuffer4[:]
-                        except:
-                            print("There is no internet connection")
                             
                 except:
                     print("There was an error in communication with the RPM sensor.")
@@ -110,29 +102,55 @@ while True:
                 
                 values=[maxx,mx,minx,maxy,my,miny,maxz,mz,minz]
 
-            try:
-                ivalues= [int(x) for x in values]
-                
-                sendG= [toGx(x) for x in ivalues[0:3] ]
-                sendG.append([toGy(x) for x in ivalues[3:6] ])
-                sendG.append([toGz(x) for x in ivalues[6:] ])
-                
-                send= [str(x) for x in sendG]
-                sendBuffer1.append(send)
-                sendBuffer2=sendBuffer1[:]
-                
-                #GET aceleraciones a base de datos
                 try:
-                    for sendIter in sendBuffer1:
+                    ivalues= [int(x) for x in values]
+                
+                    sendG= [ toGx(x) for x in ivalues[0:3] ]
+                    sendG+=[ toGy(x) for x in ivalues[3:6] ]
+                    sendG+=[ toGz(x) for x in ivalues[6:]  ]
+                
+                    sendIter= [str(x) for x in sendG]
+                    print(sendIter)
+
+                    #GET aceleraciones a base de datos
+                    try:
                         f=urllib2.urlopen("http://sistelemetria-sistelemetria.rhcloud.com/save_aero.php?type=acc&maxx="+sendIter[0]+"&mx="+sendIter[1]+"&minx="+sendIter[2]+"&maxy="+sendIter[3]+"&my="+sendIter[4]+"&miny="+sendIter[5]+"&maxz="+sendIter[6]+"&mz="+sendIter[7]+"&minz="+sendIter[8])
                         
-                        if sendIter in sendBuffer2:
-                            sendBuffer2.remove(sendIter)
-                            sendBuffer1=sendBuffer2[:]
-                except:
-                    print("There is no internet connection")
+                    except:
+                        print("There is no internet connection")
+                        sendBuffer1.append(sendIter)
+                        sendBuffer2=sendBuffer1[:]
             
             except:
                 print("There was an error in communication with Accelerometer")
                 
+    #print("Radio unavailable")
+    #time.sleep(0.01)
+
+    while len(sendBuffer4)>0:
+        try:
+            for sendRPM in sendBuffer3:
+                f = urllib2.urlopen("http://sistelemetria-sistelemetria.rhcloud.com/save_aero.php?type=rpm&rpm="+sendRPM)
+
+                if sendRPM in sendBuffer4:
+                    sendBuffer4.remove(sendRPM)
+
+            sendBuffer3=sendBuffer4[:]
+
+        except:
+            print("There is no internet connection")
+
+    while len(sendBuffer2)>0:
+        try:
+            for sendAcc in sendBuffer1:
+                f=urllib2.urlopen("http://sistelemetria-sistelemetria.rhcloud.com/save_aero.php?type=acc&maxx="+sendAcc[0]+"&mx="+sendAcc[1]+"&minx="+sendAcc[2]+"&maxy="+sendAcc[3]+"&my="+sendAcc[4]+"&miny="+sendAcc[5]+"&maxz="+senAcc[6]+"&mz="+sendAcc[7]+"&minz="+sendAcc[8])
+
+                if sendAcc in sendBuffer2:
+                    sendBuffer2.remove(sendAcc)
+
+            sendBuffer1=sendBuffer2[:]
+
+        except:
+            print("There is no internet connection")
+
     time.sleep(0.01)
