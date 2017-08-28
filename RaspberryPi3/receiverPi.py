@@ -121,8 +121,8 @@ while True:
                         sendBuffer1.append(sendIter)
                         sendBuffer2=sendBuffer1[:]
             
-            except:
-                print("There was an error in communication with Accelerometer")
+                except:
+                    print("There was an error in communication with Accelerometer")
                 
     #print("Radio unavailable")
     #time.sleep(0.01)
