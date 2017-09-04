@@ -6,7 +6,7 @@ GPIO.setmode(GPIO.BCM)
 from lib_nrf24 import NRF24
 import time
 import spidev
-import urllib, urllib2
+import requests
 
 def toGx(x):
     ixx=round(-1.214/100000000*x**3+1.844/100000*x**2-0.002251*x-2,2)
@@ -76,7 +76,11 @@ while True:
                         rpm="0.0"
                    
                     try:
-                        f = urllib2.urlopen("http://sistelemetria-sistelemetria.rhcloud.com/save_aero.php?type=rpm&rpm="+rpm)
+                        response_speed=requests.get('http://track-mypower.tk/measurements/wt_speed/new?rpm='+rpm,
+                        auth=requests.auth.HTTPBasicAuth(
+                          'admin',
+                          'uninorte'))
+                        #f = urllib2.urlopen("http://sistelemetria-sistelemetria.rhcloud.com/save_aero.php?type=rpm&rpm="+rpm)
                         internet=True    
                     except:
                         internet=False
@@ -85,7 +89,8 @@ while True:
                         lenBufRPM=len(sendBuffer3)
                             
                 except:
-                    print("There was an error in communication with the RPM sensor.")
+                    #print("There was an error in communication with the RPM sensor.")
+                    pass
             
             if string[0]=='X'and len(string)>27:
                 indX=string.find('X')
@@ -119,7 +124,11 @@ while True:
 
                     #GET aceleraciones a base de datos
                     try:
-                        f=urllib2.urlopen("http://sistelemetria-sistelemetria.rhcloud.com/save_aero.php?type=acc&maxx="+sendIter[0]+"&mx="+sendIter[1]+"&minx="+sendIter[2]+"&maxy="+sendIter[3]+"&my="+sendIter[4]+"&miny="+sendIter[5]+"&maxz="+sendIter[6]+"&mz="+sendIter[7]+"&minz="+sendIter[8])
+                        response_vibration = requests.get('http://track-mypower.tk/measurements/wt_vibration/new?max_ejex='+sendIter[0]+'&m_ejex='+sendIter[1]+'&min_ejex='+sendIter[2]+'&max_ejey='+sendIter[3]+'&m_ejey='+sendIter[4]+'&min_ejey='+sendIter[5]+'&max_ejez='+sendIter[6]+'&m_ejez='+sendIter[7]+'&min_ejez='+sendIter[8]+,
+                        auth=requests.auth.HTTPBasicAuth(
+                          'admin',
+                          'uninorte'))
+                        #f=urllib2.urlopen("http://sistelemetria-sistelemetria.rhcloud.com/save_aero.php?type=acc&maxx="+sendIter[0]+"&mx="+sendIter[1]+"&minx="+sendIter[2]+"&maxy="+sendIter[3]+"&my="+sendIter[4]+"&miny="+sendIter[5]+"&maxz="+sendIter[6]+"&mz="+sendIter[7]+"&minz="+sendIter[8])
                         internet=True
                     except:
                         internet=False
@@ -128,7 +137,8 @@ while True:
                         lenBufAcc=len(sendBuffer1)
             
                 except:
-                    print("There was an error in communication with Accelerometer")
+                    #print("There was an error in communication with Accelerometer")
+                    pass
                 
     #print("Radio unavailable")
     #time.sleep(0.01)
@@ -146,7 +156,11 @@ while True:
     while len(sendBuffer4)>0 and (not continueT):
         try:
             for sendRPM in sendBuffer3:
-                f = urllib2.urlopen("http://sistelemetria-sistelemetria.rhcloud.com/save_aero.php?type=rpm&rpm="+sendRPM)
+                response_speed=requests.get('http://track-mypower.tk/measurements/wt_speed/new?rpm='+sendRPM,
+                        auth=requests.auth.HTTPBasicAuth(
+                          'admin',
+                          'uninorte'))
+                #f = urllib2.urlopen("http://sistelemetria-sistelemetria.rhcloud.com/save_aero.php?type=rpm&rpm="+sendRPM)
 
                 if sendRPM in sendBuffer4:
                     sendBuffer4.remove(sendRPM)
@@ -161,7 +175,11 @@ while True:
     while len(sendBuffer2)>0 and (not continueB):
         try:
             for sendAcc in sendBuffer1:
-                f=urllib2.urlopen("http://sistelemetria-sistelemetria.rhcloud.com/save_aero.php?type=acc&maxx="+sendAcc[0]+"&mx="+sendAcc[1]+"&minx="+sendAcc[2]+"&maxy="+sendAcc[3]+"&my="+sendAcc[4]+"&miny="+sendAcc[5]+"&maxz="+senAcc[6]+"&mz="+sendAcc[7]+"&minz="+sendAcc[8])
+                response_vibration = requests.get('http://track-mypower.tk/measurements/wt_vibration/new?max_ejex='+sendAcc[0]+'&m_ejex='+sendAcc[1]+'&min_ejex='+sendAcc[2]+'&max_ejey='+sendAcc[3]+'&m_ejey='+sendAcc[4]+'&min_ejey='+sendAcc[5]+'&max_ejez='+sendAcc[6]+'&m_ejez='+senAcc[7]+'&min_ejez='+sendAcc[8]+,
+                        auth=requests.auth.HTTPBasicAuth(
+                          'admin',
+                          'uninorte'))
+                #f=urllib2.urlopen("http://sistelemetria-sistelemetria.rhcloud.com/save_aero.php?type=acc&maxx="+sendAcc[0]+"&mx="+sendAcc[1]+"&minx="+sendAcc[2]+"&maxy="+sendAcc[3]+"&my="+sendAcc[4]+"&miny="+sendAcc[5]+"&maxz="+senAcc[6]+"&mz="+sendAcc[7]+"&minz="+sendAcc[8])
 
                 if sendAcc in sendBuffer2:
                     sendBuffer2.remove(sendAcc)
@@ -174,4 +192,3 @@ while True:
 
     time.sleep(0.01)
     
-
