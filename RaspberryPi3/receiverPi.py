@@ -84,7 +84,11 @@ while True:
                         internet=True    
                     except:
                         internet=False
-                        sendBuffer3.append(rpm)
+                        if len(sendBuffer3)>211680:
+                            sendBuffer3=sendBuffer3[1:]
+                            sendBuffer3.append(rpm)
+                        else:
+                            sendBuffer3.append(rpm)
                         sendBuffer4=sendBuffer3[:]
                         lenBufRPM=len(sendBuffer3)
                             
@@ -132,6 +136,11 @@ while True:
                         internet=True
                     except:
                         internet=False
+                        if len(sendBuffer1)>211680:
+                            sendBuffer1=sendBuffer1[1:]
+                            sendBuffer1.append(sendIter)
+                        else:
+                            sendBuffer1.append(sendIter)
                         sendBuffer1.append(sendIter)
                         sendBuffer2=sendBuffer1[:]
                         lenBufAcc=len(sendBuffer1)
