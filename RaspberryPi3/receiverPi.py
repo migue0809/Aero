@@ -77,7 +77,7 @@ while True:
                         rpm="0.0"
                    
                     try:
-                        response_speed=requests.get('http://track-mypower.tk/measurements/wt_speed/new?rpm='+rpm+'&t='+str(date.now()),
+                        response_speed=requests.get('http://track-mypower.tk/measurements/wind_turbine_speed/new?rpm='+rpm+'&created_at='+str(date.now()),
                         auth=requests.auth.HTTPBasicAuth(
                           'admin',
                           'uninorte'))
@@ -129,7 +129,7 @@ while True:
 
                     #GET aceleraciones a base de datos
                     try:
-                        response_vibration = requests.get('http://track-mypower.tk/measurements/wt_vibration/new?max_ejex='+sendIter[0]+'&m_ejex='+sendIter[1]+'&min_ejex='+sendIter[2]+'&max_ejey='+sendIter[3]+'&m_ejey='+sendIter[4]+'&min_ejey='+sendIter[5]+'&max_ejez='+sendIter[6]+'&m_ejez='+sendIter[7]+'&min_ejez='+sendIter[8]+'&t='+str(date.now()),
+                        response_vibration = requests.get('http://track-mypower.tk/measurements/wind_turbine_vibration/new?max_ejex='+sendIter[0]+'&m_ejex='+sendIter[1]+'&min_ejex='+sendIter[2]+'&max_ejey='+sendIter[3]+'&m_ejey='+sendIter[4]+'&min_ejey='+sendIter[5]+'&max_ejez='+sendIter[6]+'&m_ejez='+sendIter[7]+'&min_ejez='+sendIter[8]+'&created_at='+str(date.now()),
                         auth=requests.auth.HTTPBasicAuth(
                           'admin',
                           'uninorte'))
