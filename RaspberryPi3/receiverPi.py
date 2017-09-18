@@ -27,7 +27,7 @@ GPIO.setwarnings(False)
 pipes = [[0xe7, 0xd3, 0xf0, 0x35, 0xff], [0xe7, 0xd3, 0xf0, 0x35, 0xc2]]
 
 radio = NRF24(GPIO, spidev.SpiDev())
-radio.begin(0, 17)
+radio.begin(1, 17)
 
 radio.setRetries(15,15)
 radio.setPALevel(NRF24.PA_MAX)
