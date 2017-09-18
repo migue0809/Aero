@@ -7,6 +7,7 @@ from lib_nrf24 import NRF24
 import time
 import spidev
 import requests
+from datetime import datetime as date
 
 def toGx(x):
     ixx=round(-1.214/100000000*x**3+1.844/100000*x**2-0.002251*x-2,2)
@@ -76,7 +77,7 @@ while True:
                         rpm="0.0"
                    
                     try:
-                        response_speed=requests.get('http://track-mypower.tk/measurements/wt_speed/new?rpm='+rpm,
+                        response_speed=requests.get('http://track-mypower.tk/measurements/wt_speed/new?rpm='+rpm+'&t='+str(date.now()),
                         auth=requests.auth.HTTPBasicAuth(
                           'admin',
                           'uninorte'))
@@ -128,7 +129,7 @@ while True:
 
                     #GET aceleraciones a base de datos
                     try:
-                        response_vibration = requests.get('http://track-mypower.tk/measurements/wt_vibration/new?max_ejex='+sendIter[0]+'&m_ejex='+sendIter[1]+'&min_ejex='+sendIter[2]+'&max_ejey='+sendIter[3]+'&m_ejey='+sendIter[4]+'&min_ejey='+sendIter[5]+'&max_ejez='+sendIter[6]+'&m_ejez='+sendIter[7]+'&min_ejez='+sendIter[8]+,
+                        response_vibration = requests.get('http://track-mypower.tk/measurements/wt_vibration/new?max_ejex='+sendIter[0]+'&m_ejex='+sendIter[1]+'&min_ejex='+sendIter[2]+'&max_ejey='+sendIter[3]+'&m_ejey='+sendIter[4]+'&min_ejey='+sendIter[5]+'&max_ejez='+sendIter[6]+'&m_ejez='+sendIter[7]+'&min_ejez='+sendIter[8]+'&t='+str(date.now()),
                         auth=requests.auth.HTTPBasicAuth(
                           'admin',
                           'uninorte'))
@@ -165,7 +166,7 @@ while True:
     while len(sendBuffer4)>0 and (not continueT):
         try:
             for sendRPM in sendBuffer3:
-                response_speed=requests.get('http://track-mypower.tk/measurements/wt_speed/new?rpm='+sendRPM,
+                response_speed=requests.get('http://track-mypower.tk/measurements/wt_speed/new?rpm='+sendRPM+'&t='+str(date.now()),
                         auth=requests.auth.HTTPBasicAuth(
                           'admin',
                           'uninorte'))
@@ -184,7 +185,7 @@ while True:
     while len(sendBuffer2)>0 and (not continueB):
         try:
             for sendAcc in sendBuffer1:
-                response_vibration = requests.get('http://track-mypower.tk/measurements/wt_vibration/new?max_ejex='+sendAcc[0]+'&m_ejex='+sendAcc[1]+'&min_ejex='+sendAcc[2]+'&max_ejey='+sendAcc[3]+'&m_ejey='+sendAcc[4]+'&min_ejey='+sendAcc[5]+'&max_ejez='+sendAcc[6]+'&m_ejez='+senAcc[7]+'&min_ejez='+sendAcc[8]+,
+                response_vibration = requests.get('http://track-mypower.tk/measurements/wt_vibration/new?max_ejex='+sendAcc[0]+'&m_ejex='+sendAcc[1]+'&min_ejex='+sendAcc[2]+'&max_ejey='+sendAcc[3]+'&m_ejey='+sendAcc[4]+'&min_ejey='+sendAcc[5]+'&max_ejez='+sendAcc[6]+'&m_ejez='+senAcc[7]+'&min_ejez='+sendAcc[8]+'&t='+str(date.now()),
                         auth=requests.auth.HTTPBasicAuth(
                           'admin',
                           'uninorte'))
