@@ -35,7 +35,7 @@ void loop() {
    x= 0;
    const unsigned long oneSecond = 1 * 1000UL;
    static unsigned long lastSampleTime = 0 - oneSecond;  
-   while(x<120){
+   while(x<12){
       unsigned long now = millis();
       if (now - lastSampleTime >= oneSecond){
        lastSampleTime += oneSecond;
@@ -44,12 +44,12 @@ void loop() {
        rpmcount = 0;  
        attachInterrupt(buttonPin, rpm_fun, RISING); 
        x++;           
-     }  if(x == 59){
-           prpm = prpm + (rpm/60);
+     }  if(x == 1){
+           prpm = (prpm + (rpm/60));
            rpm = 0;   
        } 
      }
-     prpm = prpm + (rpm/60); 
+     prpm = (prpm + (rpm/60))*10; 
      rpm= 0;
      radio.print("r");
      radio.print(prpm/2);
